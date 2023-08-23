@@ -4,25 +4,39 @@ using System.Diagnostics;
 
 Console.WriteLine("Hello");
 
+int n1 = 1000;
+int n2 = 10000;
+int n3 = 10000000;
+
+var massiv1 = new long[n1];
+for (int i = 0; i < n1; i++) { massiv1[i] = i; }
+
+var massiv2 = new long[n2];
+for (int i = 0; i < n2; i++) { massiv2[i] = i; }
+
+var massiv3 = new long[n3];
+for (int i = 0; i < n3; i++) { massiv3[i] = i; }
+
+
 
 // обычное
 
 Stopwatch stopwatch = new Stopwatch();
 
 stopwatch.Start();
-SummMassiv(100000);
+SummMassiv(massiv1);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  обычно  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 stopwatch.Restart();
-SummMassiv(1000000);
+SummMassiv(massiv2);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  обычно  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 stopwatch.Restart();
-SummMassiv(10000000);
+SummMassiv(massiv3);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  обычно  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
@@ -30,24 +44,40 @@ Console.WriteLine("Время выполнения  обычно  " + stopwatch.
 
 
 stopwatch.Restart();
-SummMassivParallel(100000);
+SummMassivParallel(massiv1);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  пар  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 stopwatch.Restart();
-SummMassivParallel(1000000);
+SummMassivParallel(massiv2);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  пар  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 stopwatch.Restart();
-SummMassivParallel(10000000);
+SummMassivParallel(massiv3);
 stopwatch.Stop();
 Console.WriteLine("Время выполнения  пар  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 
+stopwatch.Start();
+SummMassivPLinq(massiv1);
+stopwatch.Stop();
+Console.WriteLine("Время выполнения  PL  " + stopwatch.ElapsedMilliseconds + "  мсек");
+
+
+stopwatch.Restart();
+SummMassivPLinq(massiv2);
+stopwatch.Stop();
+Console.WriteLine("Время выполнения  PL  " + stopwatch.ElapsedMilliseconds + "  мсек");
+
+
+stopwatch.Restart();
+SummMassivPLinq(massiv3);
+stopwatch.Stop();
+Console.WriteLine("Время выполнения  PL  " + stopwatch.ElapsedMilliseconds + "  мсек");
 
 
 
@@ -57,57 +87,54 @@ Console.WriteLine("Время выполнения  пар  " + stopwatch.Elapse
 
 
 
-Console.WriteLine(SummMassivParallel(10));
 
 
-static int SummMassiv (int n)
+static long SummMassiv (long[] massiv)
 {
-    int Summ = 0; 
-    var massiv = new int[n];
+    long Summ = 0; 
 
+    Summ = massiv.Sum();
 
-    for (int i = 0; i < n; i++) { massiv[i] = i; }
-
-
-    for (int i = 0; i < n; i++) { Summ = Summ + massiv[i]; }
-
+    Console.WriteLine(Summ);
     return Summ;
 }
 
 
 
-static int SummMassivParallel(int n)
+static long SummMassivParallel(long[] massiv)
 {
-    int Summ = 0;
-    var massiv = new int[n];
+    long Summ = 0;
+    
 
-
-
-    Parallel.For(0, n, new ParallelOptions()
+    Parallel.For(0, massiv.Count(), new ParallelOptions()
     {
-        MaxDegreeOfParallelism = 8
-    }, i =>
-    {
-        massiv[i] = i;
-
-    });
-
-
-    Parallel.For(0, n, new ParallelOptions()
-    {
-        MaxDegreeOfParallelism = 8
+        MaxDegreeOfParallelism = 4
     }, i =>
     {
         Summ = Summ + massiv[i];
 
     });
 
-
+    Console.WriteLine(Summ);
     return Summ;
 }
 
 
+static long SummMassivPLinq(long[] massiv)
+{
+    long Summ = 0;
 
+
+
+    Summ = massiv
+         .AsParallel()
+         .Sum();
+
+    
+    
+    Console.WriteLine(Summ);
+    return Summ;
+}
 
 
 
