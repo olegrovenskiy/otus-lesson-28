@@ -131,11 +131,15 @@ static long SummMassivThread(long[] massiv)
     long Summ1 = 0;
     long Summ2 = 0;
 
+    int MassivQuantity = massiv.Count();
+    int HalfMassivQuantity = MassivQuantity / 2;
 
     Thread myThread1 = new Thread(() =>
 
     {
-        for (int i = 0; i < massiv.Count()/2; i++)
+       
+               
+        for (int i = 0; i < HalfMassivQuantity; i++)
         {
             Summ1 = Summ1 + massiv[i];
         }
@@ -146,7 +150,7 @@ static long SummMassivThread(long[] massiv)
     Thread myThread2 = new Thread(() =>
 
     {
-        for (int i = massiv.Count() / 2; i < massiv.Count(); i++)
+        for (int i = HalfMassivQuantity; i < MassivQuantity; i++)
         {
             Summ2 = Summ2 + massiv[i];
         }
@@ -170,23 +174,15 @@ static long SummMassivParallel(long[] massiv)
 {
     long Summ = 0;
 
-    Parallel.For(0, massiv.Count(), i =>
+    int MassivQuantity = massiv.Count();
+
+    Parallel.For(0, MassivQuantity, i =>
     {
         Summ = Summ + massiv[i];
 
     });
 
 
-    /*
-    Parallel.For(0, massiv.Count(), new ParallelOptions()
-    {
-        MaxDegreeOfParallelism = 1
-    }, i =>
-    {
-        Summ = Summ + massiv[i];
-
-    });
-    */
     Console.WriteLine(Summ);
     return Summ;
 }
